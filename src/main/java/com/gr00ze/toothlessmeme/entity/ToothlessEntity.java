@@ -2,17 +2,16 @@ package com.gr00ze.toothlessmeme.entity;
 
 import com.gr00ze.toothlessmeme.client.sounds.Sounds;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
+
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Animal;
+
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -21,17 +20,18 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
+import static com.gr00ze.toothlessmeme.client.model.ToothlessModel.danceState;
+import static com.gr00ze.toothlessmeme.client.model.ToothlessModel.eatingState;
 
 
 public class ToothlessEntity extends Cat {
 
-    private static final int
+    private static final double
             MAX_HEALTH = 1,
-            MOVEMENT_SPEED = 1;
+            MOVEMENT_SPEED = 0.01;
 
     private boolean isDancing = false;
-    private int cooldownDance = -1;
+    private int coolDownDance = -1;
 
 
     protected ToothlessEntity(EntityType<? extends Cat> type, Level level) {
@@ -51,14 +51,14 @@ public class ToothlessEntity extends Cat {
     public void tick() {
         super.tick();
 
-        if (cooldownDance <= -1 && isDancing){
-            cooldownDance = 20 * 20; //sec * tick for sec
+        if (coolDownDance <= -1 && isDancing){
+            coolDownDance = 20 * 20; //sec * tick for sec
         }
-        cooldownDance--;
+        coolDownDance--;
 
-        if (cooldownDance == 0){
+        if (coolDownDance == 0){
             isDancing = false;
-            cooldownDance = -1;
+            coolDownDance = -1;
         }
     }
 
@@ -67,15 +67,22 @@ public class ToothlessEntity extends Cat {
         ItemStack itemstack = player.getItemInHand(hand);
         if (itemstack.isEmpty())
             player.startRiding(this);
-        if (this.isFood(itemstack) && isTame() && !isDancing){
-            if (!isBaby())
+        if (this.isFood(itemstack)){
+            if  (isTame() && !danceState.isStarted()){
+                float volume = 1, pitch = 1;
+                if (isBaby())
+                    pitch = 1.2F;
+                level().playSound(null, this, Sounds.DANCE.get(), this.getSoundSource(), volume, pitch);
+                danceState.start(this.tickCount);
+            }
+            else if (isTame() &&  !eatingState.isStarted()){
+                float volume = 1, pitch = 1;
+                if (isBaby())
+                    pitch = 1.2F;
+                level().playSound(null, this, Sounds.EATING.get(), this.getSoundSource(), volume, pitch);
+                eatingState.start(this.tickCount);
 
-                level().playSound(null, this, Sounds.DANCE.get(), this.getSoundSource(), 1, 1);
-            else
-                this.playSound(Sounds.DANCE.get(),1,2);
-
-
-            isDancing = true;
+            }
         }
 
         return super.mobInteract(player, hand);
@@ -89,7 +96,7 @@ public class ToothlessEntity extends Cat {
         return toothlessEntity;
     }
 
-    public static boolean canSpawn(EntityType<ToothlessEntity> toothlessEntityEntityType, ServerLevelAccessor serverLevelAccessor, MobSpawnType mobSpawnType, BlockPos blockPos, RandomSource randomSource) {
+    public static boolean canSpawn(EntityType<ToothlessEntity> type, ServerLevelAccessor serverLevelAccessor, MobSpawnType spawnType, BlockPos blockPos, RandomSource randomSource) {
     return true;
     }
 }

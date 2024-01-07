@@ -1,5 +1,6 @@
 package com.gr00ze.toothlessmeme.client.model;
 
+import com.gr00ze.toothlessmeme.client.animations.Animations;
 import com.gr00ze.toothlessmeme.entity.ToothlessEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -8,6 +9,7 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
+import net.minecraft.world.entity.AnimationState;
 import org.jetbrains.annotations.NotNull;
 
 import static com.gr00ze.toothlessmeme.client.render.ToothlessRender.TEXTURE;
@@ -17,9 +19,13 @@ public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
     public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(TEXTURE,"main");
     private final ModelPart root, bb_main;
 
+    public static AnimationState danceState,eatingState;
+
     public ToothlessModel(ModelPart root){
         this.root = root;
         this.bb_main = root.getChild("bb_main");
+        danceState = new AnimationState();
+        eatingState = new AnimationState();
     }
 
     @Override
@@ -97,7 +103,9 @@ public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
         bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
     }
     @Override
-    public void setupAnim(@NotNull ToothlessEntity toothlessEntity, float v, float v1, float v2, float v3, float v4) {
-
+    public void setupAnim(@NotNull ToothlessEntity toothlessEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.root().getAllParts().forEach(ModelPart::resetPose);
+        this.animate(danceState, Animations.TOOTHLESS_DANCE,ageInTicks);
+        this.animate(eatingState, Animations.TOOTHLESS_EATING,ageInTicks);
     }
 }
