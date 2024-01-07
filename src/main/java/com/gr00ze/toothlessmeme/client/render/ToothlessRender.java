@@ -2,6 +2,8 @@ package com.gr00ze.toothlessmeme.client.render;
 
 import com.gr00ze.toothlessmeme.client.model.ToothlessModel;
 import com.gr00ze.toothlessmeme.entity.ToothlessEntity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
@@ -21,5 +23,16 @@ public class ToothlessRender extends MobRenderer<ToothlessEntity, ToothlessModel
     @Override
     public @NotNull ResourceLocation getTextureLocation(@NotNull ToothlessEntity toothlessEntity) {
         return TEXTURE;
+    }
+
+
+    @Override
+    public void render(@NotNull ToothlessEntity toothless, float yaw, float partialTicks, @NotNull PoseStack matrixStack, @NotNull MultiBufferSource buffer, int packedLight) {
+        if (toothless.isBaby()){
+            matrixStack.scale(0.3F,0.3F,0.3F);
+
+        }
+
+        super.render(toothless, yaw, partialTicks, matrixStack, buffer, packedLight);
     }
 }
