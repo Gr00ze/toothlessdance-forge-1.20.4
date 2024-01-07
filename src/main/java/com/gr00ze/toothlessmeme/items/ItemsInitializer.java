@@ -13,7 +13,7 @@ import static com.gr00ze.toothlessmeme.entity.EntityInit.TOOTHLESS_ENTITY;
 public class ItemsInitializer {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
-    public static final RegistryObject<Item> TOOTHLESS_EGG_ITEM = ITEMS.register("toothless_egg", () -> new ForgeSpawnEggItem(TOOTHLESS_ENTITY,0x111111,0x111A1A, new Item.Properties()));
+    public static final RegistryObject<Item> TOOTHLESS_EGG_ITEM = ITEMS.register("toothless_spawn_egg", () -> new ForgeSpawnEggItem(TOOTHLESS_ENTITY,0x111111,0x111A1A, new Item.Properties()));
 
     public static void register(IEventBus e){
         ITEMS.register(e);
