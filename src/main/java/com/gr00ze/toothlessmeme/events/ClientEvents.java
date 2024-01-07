@@ -1,4 +1,4 @@
-package com.gr00ze.toothlessmeme.client.events;
+package com.gr00ze.toothlessmeme.events;
 
 import com.gr00ze.toothlessmeme.client.model.ToothlessModel;
 import com.gr00ze.toothlessmeme.client.render.ToothlessRender;
