@@ -14,8 +14,11 @@ import static com.gr00ze.toothlessmeme.ToothlessMemeMod.MOD_ID;
 public class EntityInit {
     public static final DeferredRegister<EntityType<?>> ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES,MOD_ID);
 
-    public static RegistryObject<EntityType<ToothlessEntity>> TOOTHLESS_ENTITY = ENTITIES.register("toothless",() -> EntityType.Builder.of(ToothlessEntity::new, MobCategory.CREATURE)
-            .build(ToothlessRender.TEXTURE.toString()));
+    public static RegistryObject<EntityType<ToothlessEntity>> TOOTHLESS_ENTITY = ENTITIES.register(
+            "toothless",
+            () -> EntityType.Builder.of(ToothlessEntity::new, MobCategory.CREATURE)
+                    .sized(1.5F,3)
+                    .build(ToothlessRender.TEXTURE.toString()));
 
     public static void register(IEventBus e) {
         ENTITIES.register(e);
