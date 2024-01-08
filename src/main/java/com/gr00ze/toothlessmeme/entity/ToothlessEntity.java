@@ -28,7 +28,8 @@ public class ToothlessEntity extends Cat {
 
     private static final double
             MAX_HEALTH = 1,
-            MOVEMENT_SPEED = 0.01;
+            MOVEMENT_SPEED = 0.01,
+            ATTACKDAMAGE = 0;
 
     private boolean isDancing = false;
     private int coolDownDance = -1;
@@ -43,6 +44,7 @@ public class ToothlessEntity extends Cat {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, MAX_HEALTH)
                 .add(Attributes.MOVEMENT_SPEED, MOVEMENT_SPEED)
+                .add(Attributes.ATTACK_DAMAGE, ATTACKDAMAGE)
                 .build();
     }
 
@@ -68,14 +70,18 @@ public class ToothlessEntity extends Cat {
         if (itemstack.isEmpty())
             player.startRiding(this);
         if (this.isFood(itemstack)){
-            if  (isTame() && !danceState.isStarted()){
+            if  (isTame() ){
+                System.out.println(danceState.isStarted());
+                System.out.println(danceState.getAccumulatedTime());
                 float volume = 1, pitch = 1;
                 if (isBaby())
                     pitch = 1.2F;
                 level().playSound(null, this, Sounds.DANCE.get(), this.getSoundSource(), volume, pitch);
                 danceState.start(this.tickCount);
+
+
             }
-            else if (isTame() &&  !eatingState.isStarted()){
+            else if (!isTame()){
                 float volume = 1, pitch = 1;
                 if (isBaby())
                     pitch = 1.2F;
