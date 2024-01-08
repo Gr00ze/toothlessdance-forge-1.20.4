@@ -17,13 +17,13 @@ import static com.gr00ze.toothlessmeme.client.render.ToothlessRender.TEXTURE;
 public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
 
     public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(TEXTURE,"main");
-    private final ModelPart root, bb_main;
+    private final ModelPart root;
 
     public static AnimationState danceState,eatingState;
 
     public ToothlessModel(ModelPart root){
         this.root = root;
-        this.bb_main = root.getChild("bb_main");
+
         danceState = new AnimationState();
         eatingState = new AnimationState();
     }
@@ -93,14 +93,14 @@ public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
 
         PartDefinition coda2_r1 = Coda2.addOrReplaceChild("coda2_r1", CubeListBuilder.create().texOffs(36, 45).addBox(-1.5F, -23.5F, -2.0F, 3.0F, 26.0F, 4.0F, new CubeDeformation(0.0F)), PartPose.offsetAndRotation(-14.5F, -2.5F, 0.0F, 0.0F, 0.0F, -0.3054F));
 
-        PartDefinition bb_main = partdefinition.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(-15, -15).addBox(-8.0F, -48.0F, 14.0F, 16.0F, 48.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
+        //PartDefinition bb_main = partdefinition.addOrReplaceChild("bb_main", CubeListBuilder.create().texOffs(-15, -15).addBox(-8.0F, -48.0F, 14.0F, 16.0F, 48.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(0.0F, 24.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
     @Override
     public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         root.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-        bb_main.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
+
     }
     @Override
     public void setupAnim(@NotNull ToothlessEntity toothlessEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
