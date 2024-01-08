@@ -12,13 +12,17 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.entity.animal.Cat;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static com.gr00ze.toothlessmeme.client.model.ToothlessModel.danceState;
 import static com.gr00ze.toothlessmeme.client.model.ToothlessModel.eatingState;
@@ -62,33 +66,42 @@ public class ToothlessEntity extends Cat {
             isDancing = false;
             coolDownDance = -1;
         }
+
+        if (this.isTame())
+            getMountedIfPlayerWantIt();
+    }
+
+    private void getMountedIfPlayerWantIt() {
+        List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0,-2,0).move(0, 2, 0), EntitySelector.notRiding(this));
+        if (!list.isEmpty()) {
+            for (Entity entity : list) {
+                System.out.println(entity+ " sopra toothless");
+                if (entity instanceof Player player && !player.isShiftKeyDown() ) {
+                    player.startRiding(this);
+                    break;
+                }
+
+            }
+        }
     }
 
     @Override
     public @NotNull InteractionResult mobInteract(@NotNull Player player, @NotNull InteractionHand hand) {
         ItemStack itemstack = player.getItemInHand(hand);
-        if (itemstack.isEmpty())
-            player.startRiding(this);
-        if (this.isFood(itemstack)){
-            if  (isTame() ){
-                System.out.println(danceState.isStarted());
-                System.out.println(danceState.getAccumulatedTime());
-                float volume = 1, pitch = 1;
-                if (isBaby())
-                    pitch = 1.2F;
-                level().playSound(null, this, Sounds.DANCE.get(), this.getSoundSource(), volume, pitch);
-                danceState.start(this.tickCount);
-
-
-            }
-            else if (!isTame()){
+        if (itemstack.isEmpty() && isTame() && !isDancing) {
+            float volume = 1, pitch = 1;
+            if (isBaby())
+                pitch = 1.2F;
+            level().playSound(null, this, Sounds.DANCE.get(), this.getSoundSource(), volume, pitch);
+            danceState.start(this.tickCount);
+            isDancing = true;
+        }
+        if (this.isFood(itemstack) && !isTame() ){
                 float volume = 1, pitch = 1;
                 if (isBaby())
                     pitch = 1.2F;
                 level().playSound(null, this, Sounds.EATING.get(), this.getSoundSource(), volume, pitch);
                 eatingState.start(this.tickCount);
-
-            }
         }
 
         return super.mobInteract(player, hand);
@@ -98,11 +111,19 @@ public class ToothlessEntity extends Cat {
     @Nullable
     @Override
     public ToothlessEntity getBreedOffspring(@NotNull ServerLevel serverLevel, @NotNull AgeableMob p_148871_) {
-        ToothlessEntity toothlessEntity = EntityInit.TOOTHLESS_ENTITY.get().create(serverLevel);
-        return toothlessEntity;
+        return EntityInit.TOOTHLESS_ENTITY.get().create(serverLevel);
     }
 
     public static boolean canSpawn(EntityType<ToothlessEntity> type, ServerLevelAccessor serverLevelAccessor, MobSpawnType spawnType, BlockPos blockPos, RandomSource randomSource) {
-    return true;
+        Player player = serverLevelAccessor.getLevel().getNearestPlayer(TargetingConditions.forNonCombat(),blockPos.getX(),blockPos.getY(),blockPos.getZ());
+
+        if (player == null) {
+            System.out.println("Player nullo");
+            return false;
+        }
+        System.out.println("Player non nullo");
+        ItemStack itemStack = player.getMainHandItem();
+        System.out.println("Pesce in mano?: "+ (itemStack.is(Items.COD) || itemStack.is(Items.SALMON)));
+        return itemStack.is(Items.COD) || itemStack.is(Items.SALMON);
     }
 }
