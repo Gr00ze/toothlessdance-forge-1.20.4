@@ -18,7 +18,7 @@ public class EntityInit {
             "toothless",
             () -> EntityType.Builder.of(ToothlessEntity::new, MobCategory.CREATURE)
                     .sized(1.5F,3)
-                    .build(ToothlessRender.TEXTURE.toString()));
+                    .build("toothless"));
 
     public static void register(IEventBus e) {
         ENTITIES.register(e);

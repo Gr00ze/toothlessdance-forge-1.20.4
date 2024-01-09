@@ -100,7 +100,6 @@ public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
     @Override
     public void renderToBuffer(@NotNull PoseStack poseStack, @NotNull VertexConsumer vertexConsumer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
         root.render(poseStack, vertexConsumer, packedLight, packedOverlay, red, green, blue, alpha);
-
     }
     @Override
     public void setupAnim(@NotNull ToothlessEntity toothlessEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

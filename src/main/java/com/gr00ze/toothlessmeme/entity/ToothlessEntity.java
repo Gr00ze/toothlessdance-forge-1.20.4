@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,7 +37,7 @@ public class ToothlessEntity extends Cat {
             ATTACKDAMAGE = 0;
 
     private boolean isDancing = false;
-    private int coolDownDance = -1;
+    private int coolDownDance = -1, coolDownMount = 0;
 
 
     protected ToothlessEntity(EntityType<? extends Cat> type, Level level) {
@@ -61,26 +62,53 @@ public class ToothlessEntity extends Cat {
             coolDownDance = 20 * 20; //sec * tick for sec
         }
         coolDownDance--;
+
         if (coolDownDance == 0){
             isDancing = false;
             coolDownDance = -1;
         }
         if (this.isTame())
             getMountedIfPlayerWantIt();
+
+
     }
 
     private void getMountedIfPlayerWantIt() {
+//        List<Entity> passengers = this.getPassengers();
+//        System.out.println("HP "+ !passengers.isEmpty() + " "+ this.level().isClientSide());
+//        if (!passengers.isEmpty()){
+//            if (passengers.get(0) instanceof Player player && player.isShiftKeyDown()){
+//                player.stopRiding();
+//                //coolDownMount = 2 * 20;
+//            }
+//        }
+        //if (coolDownMount > 0)return;
         List<Entity> list = this.level().getEntities(this, this.getBoundingBox().inflate(0,-2,0).move(0, 2, 0), EntitySelector.notRiding(this));
-        if (!list.isEmpty()) {
-            for (Entity entity : list) {
-                System.out.println(entity+ " sopra toothless");
-                if (entity instanceof Player player && !player.isShiftKeyDown() ) {
+        if (list.isEmpty() || this.level().isClientSide()) return;
+        for (Entity entity : list) {
+            if (entity instanceof Player player && !player.isShiftKeyDown() )  {
                     player.startRiding(this);
                     break;
-                }
+
+                //System.out.println(!player.isShiftKeyDown());
+
+
 
             }
+
+
         }
+
+    }
+
+    @Override
+    public @NotNull Vec3 getDismountLocationForPassenger(@NotNull LivingEntity livingEntity) {
+        return new Vec3(this.getX()+3, this.getY(), this.getZ());
+    }
+
+    @Override
+    public boolean canRiderInteract() {
+        return true;
     }
 
     @Override
@@ -91,15 +119,19 @@ public class ToothlessEntity extends Cat {
             if (isBaby())
                 pitch = 1.2F;
             level().playSound(null, this, Sounds.DANCE.get(), this.getSoundSource(), volume, pitch);
-            danceState.start(this.tickCount);
+            if (this.level().isClientSide()){
+                danceState.start(this.tickCount);
+            }
             isDancing = true;
         }
         if (this.isFood(itemstack) && !isTame() ){
-                float volume = 1, pitch = 1;
-                if (isBaby())
-                    pitch = 1.2F;
-                level().playSound(null, this, Sounds.EATING.get(), this.getSoundSource(), volume, pitch);
+            float volume = 1, pitch = 1;
+            if (isBaby())
+                pitch = 1.2F;
+            level().playSound(null, this, Sounds.EATING.get(), this.getSoundSource(), volume, pitch);
+            if (this.level().isClientSide()){
                 eatingState.start(this.tickCount);
+            }
         }
 
         return super.mobInteract(player, hand);
