@@ -118,12 +118,12 @@ public class ToothlessEntity extends Cat {
         Player player = serverLevelAccessor.getLevel().getNearestPlayer(TargetingConditions.forNonCombat(),blockPos.getX(),blockPos.getY(),blockPos.getZ());
 
         if (player == null) {
-            System.out.println("Player nullo");
+            //System.out.println("Player nullo");
             return false;
         }
-        System.out.println("Player non nullo");
+        //System.out.println("Player non nullo");
         ItemStack itemStack = player.getMainHandItem();
-        System.out.println("Pesce in mano?: "+ (itemStack.is(Items.COD) || itemStack.is(Items.SALMON)));
+        //System.out.println("Pesce in mano?: "+ (itemStack.is(Items.COD) || itemStack.is(Items.SALMON)));
         return itemStack.is(Items.COD) || itemStack.is(Items.SALMON);
     }
 }
