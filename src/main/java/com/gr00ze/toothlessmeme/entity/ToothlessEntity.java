@@ -35,8 +35,8 @@ public class ToothlessEntity extends Cat {
             MOVEMENT_SPEED = 0.01,
             ATTACKDAMAGE = 0;
 
-    private boolean isDancing = false;
-    private int coolDownDance = -1;
+    private Boolean isDancing = false;
+    private Integer coolDownDance = -1;
 
 
     protected ToothlessEntity(EntityType<? extends Cat> type, Level level) {
@@ -56,9 +56,16 @@ public class ToothlessEntity extends Cat {
     @Override
     public void tick() {
         super.tick();
+        handleCoolSown(this.coolDownDance,isDancing, 20);
 
+
+        if (this.isTame())
+            getMountedIfPlayerWantIt();
+    }
+
+    private static void handleCoolSown(Integer coolDownDance, Boolean isDancing, Integer soundDuration) {
         if (coolDownDance <= -1 && isDancing){
-            coolDownDance = 20 * 20; //sec * tick for sec
+            coolDownDance = soundDuration * 20; //sec * tick for sec
         }
         coolDownDance--;
 
@@ -66,9 +73,6 @@ public class ToothlessEntity extends Cat {
             isDancing = false;
             coolDownDance = -1;
         }
-
-        if (this.isTame())
-            getMountedIfPlayerWantIt();
     }
 
     private void getMountedIfPlayerWantIt() {
