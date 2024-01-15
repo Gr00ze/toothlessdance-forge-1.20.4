@@ -25,9 +25,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static com.gr00ze.toothlessmeme.client.model.ToothlessModel.danceState;
-import static com.gr00ze.toothlessmeme.client.model.ToothlessModel.eatingState;
-
 
 public class ToothlessEntity extends Cat {
 
@@ -39,9 +36,14 @@ public class ToothlessEntity extends Cat {
     private boolean isDancing = false;
     private int coolDownDance = -1, coolDownMount = 0;
 
+    public AnimationState danceState,eatingState;
+
 
     protected ToothlessEntity(EntityType<? extends Cat> type, Level level) {
         super(type, level);
+        danceState = new AnimationState();
+        eatingState = new AnimationState();
+
     }
 
 
@@ -53,6 +55,11 @@ public class ToothlessEntity extends Cat {
                 .build();
     }
 
+    @Override
+    protected void registerGoals() {
+        super.registerGoals();
+
+    }
 
     @Override
     public void tick() {

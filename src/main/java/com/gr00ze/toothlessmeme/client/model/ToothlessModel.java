@@ -19,13 +19,12 @@ public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
     public static final ModelLayerLocation MODEL_LAYER_LOCATION = new ModelLayerLocation(TEXTURE,"main");
     private final ModelPart root;
 
-    public static AnimationState danceState,eatingState;
+
 
     public ToothlessModel(ModelPart root){
         this.root = root;
 
-        danceState = new AnimationState();
-        eatingState = new AnimationState();
+
     }
 
     @Override
@@ -104,7 +103,7 @@ public class ToothlessModel extends HierarchicalModel<ToothlessEntity> {
     @Override
     public void setupAnim(@NotNull ToothlessEntity toothlessEntity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.root().getAllParts().forEach(ModelPart::resetPose);
-        this.animate(danceState, Animations.TOOTHLESS_DANCE,ageInTicks);
-        this.animate(eatingState, Animations.TOOTHLESS_EATING,ageInTicks);
+        this.animate(toothlessEntity.danceState, Animations.TOOTHLESS_DANCE,ageInTicks);
+        this.animate(toothlessEntity.eatingState, Animations.TOOTHLESS_EATING,ageInTicks);
     }
 }
